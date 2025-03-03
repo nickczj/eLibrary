@@ -11,8 +11,6 @@ import (
 //go:generate go mod tidy
 //go:generate go mod download
 
-var app *gin.Engine
-
 func main() {
 	if !gin.IsDebugging() {
 		log.SetLevel(log.InfoLevel)

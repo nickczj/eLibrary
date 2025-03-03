@@ -14,11 +14,11 @@ func SetupRouter() *gin.Engine {
 	eLibrary := r.Group("/elibrary/v1")
 	{
 		eLibrary.GET("/book/:title", handlers.GetBook)
-		eLibrary.POST("/borrow/", handlers.BorrowBook)
-		eLibrary.POST("/extend/", handlers.ExtendBook)
-		eLibrary.POST("/return/", handlers.ReturnBook)
-		eLibrary.POST("/create-book/", handlers.CreateBook)
-		eLibrary.POST("/create-user/", handlers.CreateUser)
+		eLibrary.POST("/borrow", handlers.BorrowBook)
+		eLibrary.POST("/extend", handlers.ExtendBook)
+		eLibrary.POST("/return", handlers.ReturnBook)
+		eLibrary.POST("/create-book", handlers.CreateBook)
+		eLibrary.POST("/create-user", handlers.CreateUser)
 	}
 
 	return r
