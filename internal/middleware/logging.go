@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"io"
 	"time"
 )
@@ -44,14 +44,14 @@ func Logger() gin.HandlerFunc {
 			var err error
 			bodyBytes, err = io.ReadAll(c.Request.Body)
 			if err != nil {
-				logrus.WithError(err).Error("Error reading request body")
+				log.WithError(err).Error("Error reading request body")
 			} else {
 				// Reset the request body for subsequent handlers
 				c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 			}
 		}
 
-		logrus.WithFields(logrus.Fields{
+		log.WithFields(log.Fields{
 			"method":  c.Request.Method,
 			"path":    c.Request.URL.Path,
 			"headers": c.Request.Header,
@@ -68,7 +68,7 @@ func Logger() gin.HandlerFunc {
 
 		// Log response details
 		endTime := time.Since(startTime)
-		logrus.WithFields(logrus.Fields{
+		log.WithFields(log.Fields{
 			"status":       writer.Status(),
 			"responseBody": responseBody.String(),
 			"responseTime": endTime,
