@@ -50,7 +50,7 @@ func ExtendBook(c *gin.Context) {
 	} else if !isValidBookTitle(loanRequest.Title) {
 		c.JSON(http.StatusBadRequest, gin.H{"bad request": "invalid book title provided"})
 	} else if loan, err := service.ExtendBook(loanRequest.UserId, loanRequest.Title); err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		c.JSON(http.StatusConflict, gin.H{"bad request": "there are no more available books to borrow"})
+		c.JSON(http.StatusConflict, gin.H{"bad request": "loan not found", "details:": err.Error()})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"loan": loan})
 	}
@@ -64,7 +64,9 @@ func ReturnBook(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"bad request": "validation failed", "details:": err.Error()})
 	} else if !isValidBookTitle(loanRequest.Title) {
 		c.JSON(http.StatusBadRequest, gin.H{"bad request": "invalid book title provided"})
-	} else if loan, err := service.ReturnBook(loanRequest.UserId, loanRequest.Title); err != nil {
+	} else if loan, err := service.ReturnBook(loanRequest.UserId, loanRequest.Title); err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
+		c.JSON(http.StatusConflict, gin.H{"bad request": "loan not found", "details:": err.Error()})
+	} else if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"internal server error": "something went wrong", "details:": err.Error()})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"loan": loan})
