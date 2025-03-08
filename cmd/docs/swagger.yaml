@@ -1,0 +1,303 @@
+basePath: /elibrary/v1
+definitions:
+  dto.BookDetail:
+    properties:
+      author:
+        type: string
+      available_copies:
+        type: integer
+      title:
+        type: string
+    type: object
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  model.BookDetail:
+    properties:
+      author:
+        type: string
+      available_copies:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      isbn:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: string
+    required:
+    - author
+    - available_copies
+    - isbn
+    - title
+    type: object
+  model.FailedResponse:
+    properties:
+      error: {}
+      message:
+        description: Descriptive message
+        type: string
+      status:
+        description: '"success" or "error"'
+        type: string
+    type: object
+  model.LoanRequest:
+    properties:
+      title:
+        type: string
+      user_id:
+        type: integer
+    required:
+    - title
+    - user_id
+    type: object
+  model.SuccessBookResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dto.BookDetail'
+      message:
+        description: Descriptive message
+        type: string
+      status:
+        description: '"success" or "error"'
+        type: string
+    type: object
+  model.User:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      updatedAt:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - first_name
+    - last_name
+    - username
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:3000
+info:
+  contact:
+    email: x@nickczj.com
+    name: Nick Chow
+  description: This is a sample eLibrary server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: eLibrary API
+  version: "1.0"
+paths:
+  /elibrary/v1/book/{title}:
+    get:
+      description: get book by title
+      parameters:
+      - description: Book Title
+        in: path
+        name: title
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SuccessBookResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+      summary: Retrieve Book Details
+  /elibrary/v1/borrow:
+    post:
+      consumes:
+      - application/json
+      description: borrow a book by title and user id
+      parameters:
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoanRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SuccessBookResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+      summary: Borrow a book - with a 4-week loan
+  /elibrary/v1/create-book:
+    post:
+      consumes:
+      - application/json
+      description: create a book in the database
+      parameters:
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.BookDetail'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SuccessBookResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+      summary: Create a book
+  /elibrary/v1/create-user:
+    post:
+      consumes:
+      - application/json
+      description: create a user in the eLibrary system
+      parameters:
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SuccessBookResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+      summary: Create a user
+  /elibrary/v1/extend:
+    post:
+      consumes:
+      - application/json
+      description: extend a loan by book title and user id
+      parameters:
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoanRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SuccessBookResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+      summary: Extend a loan - by 3-weeks
+  /elibrary/v1/return:
+    post:
+      consumes:
+      - application/json
+      description: return a book by title and user id
+      parameters:
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoanRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SuccessBookResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+      summary: Return a book
+swagger: "2.0"

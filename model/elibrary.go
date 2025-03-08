@@ -1,6 +1,7 @@
 package model
 
 import (
+	"eLibrary/dto"
 	"gorm.io/gorm"
 	"time"
 )
@@ -36,4 +37,19 @@ type User struct {
 	LastName  string `json:"last_name" validate:"required"`
 	Username  string `json:"username" validate:"required"`
 	Email     string `json:"email" validate:"required,email"`
+}
+
+type APIResponse struct {
+	Status  string `json:"status"`  // "success" or "error"
+	Message string `json:"message"` // Descriptive message
+}
+
+type SuccessBookResponse struct {
+	APIResponse
+	Data dto.BookDetail `json:"data"`
+}
+
+type FailedResponse struct {
+	APIResponse
+	ErrorDetails interface{} `json:"error,omitempty"`
 }

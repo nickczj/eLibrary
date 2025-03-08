@@ -2,14 +2,13 @@ package routes
 
 import (
 	"eLibrary/internal/handlers"
-	"eLibrary/internal/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
-	r.Use(middleware.Logger())
+	//r.Use(middleware.Logger())
 
 	eLibrary := r.Group("/elibrary/v1")
 	{
