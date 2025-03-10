@@ -1,6 +1,7 @@
 package model
 
 import (
+	"eLibrary/dto"
 	"gorm.io/gorm"
 	"time"
 )
@@ -32,8 +33,37 @@ type LoanRequest struct {
 
 type User struct {
 	gorm.Model
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	FirstName string `json:"first_name" validate:"required"`
+	LastName  string `json:"last_name" validate:"required"`
 	Username  string `json:"username" validate:"required"`
 	Email     string `json:"email" validate:"required,email"`
+}
+
+type APIResponse struct {
+	Status  string `json:"status"`  // "success" or "error"
+	Message string `json:"message"` // Descriptive message
+}
+
+type SuccessBookResponse struct {
+	Data dto.BookDetail `json:"data"`
+}
+
+type SuccessCreateBookResponse struct {
+	APIResponse
+	Data dto.BookDetail `json:"data"`
+}
+
+type SuccessLoanResponse struct {
+	APIResponse
+	Data dto.Loan `json:"data"`
+}
+
+type SuccessUserResponse struct {
+	APIResponse
+	Data dto.User `json:"data"`
+}
+
+type FailedResponse struct {
+	APIResponse
+	ErrorDetails interface{} `json:"error,omitempty"`
 }

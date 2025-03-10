@@ -2,11 +2,11 @@ package service
 
 import (
 	"eLibrary/global"
+	"eLibrary/internal/elibErr"
+	"eLibrary/internal/helper"
 	"eLibrary/model"
 	"errors"
-	"fmt"
 	"gorm.io/gorm"
-	"time"
 )
 
 func GetBook(title string) (book model.BookDetail, err error) {
@@ -18,13 +18,13 @@ func BorrowBook(request model.LoanRequest) (loan model.LoanDetail, err error) {
 	book := model.BookDetail{}
 	bookErr := global.Database.Where("title = ? AND available_copies > 0", request.Title).First(&book).Error
 	if bookErr != nil {
-		return loan, bookErr
+		return loan, elibErr.BookNotFound
 	}
 
 	user := model.User{}
 	userErr := global.Database.Where("id = ?", request.UserId).First(&user).Error
 	if userErr != nil && errors.Is(userErr, gorm.ErrRecordNotFound) {
-		return loan, errors.New("user not found")
+		return loan, elibErr.UserNotFound
 	} else if userErr != nil {
 		return loan, userErr
 	}
@@ -32,28 +32,21 @@ func BorrowBook(request model.LoanRequest) (loan model.LoanDetail, err error) {
 	loan = model.LoanDetail{}
 	loanErr := global.Database.Where("book_id = ? AND user_id = ? AND is_returned = ?", book.ID, user.ID, false).First(&loan).Error
 	if loanErr == nil {
-		return loan, errors.New("a loan for this book exists")
+		return loan, elibErr.LoanAlreadyExists
 	}
 
 	book.AvailableCopies = book.AvailableCopies - 1
 	global.Database.Save(&book)
 
-	loan = model.LoanDetail{
-		BookDetail:     book,
-		User:           user,
-		NameOfBorrower: fmt.Sprintf("%s %s", user.FirstName, user.LastName),
-		LoanDate:       time.Now(),
-		ReturnDate:     time.Now().AddDate(0, 0, 28),
-		IsReturned:     false,
-	}
+	loan = helper.ConstructNewLoan(loan, book, user)
 
 	result := global.Database.Create(&loan)
 	return loan, result.Error
 }
 
-func ExtendBook(userId int, title string) (loan model.LoanDetail, err error) {
-	if loan, err = findLoan(userId, title); err != nil {
-		return loan, err
+func ExtendBook(request model.LoanRequest) (loan model.LoanDetail, err error) {
+	if loan, err = findLoan(request.UserId, request.Title, false); err != nil {
+		return loan, elibErr.NoLoanFound
 	}
 
 	loan.ReturnDate = loan.ReturnDate.AddDate(0, 0, 21)
@@ -62,15 +55,9 @@ func ExtendBook(userId int, title string) (loan model.LoanDetail, err error) {
 	return loan, result.Error
 }
 
-func ReturnBook(userId int, title string) (loan model.LoanDetail, err error) {
-	loan = model.LoanDetail{}
-
-	err = global.Database.Preload("User").Preload("BookDetail").
-		Joins("JOIN book_details ON book_details.id = loan_details.book_id").
-		Where("book_details.title = ? AND loan_details.user_id = ? AND is_returned = ?", title, userId, false).
-		First(&loan).Error
-	if err != nil {
-		return loan, err
+func ReturnBook(request model.LoanRequest) (loan model.LoanDetail, err error) {
+	if loan, err = findLoan(request.UserId, request.Title, false); err != nil {
+		return loan, elibErr.NoLoanFound
 	}
 
 	loan.IsReturned = true
@@ -109,12 +96,12 @@ func CreateUser(firstName string, lastName string, username string, email string
 	return user, result.Error
 }
 
-func findLoan(userId int, title string) (loan model.LoanDetail, err error) {
+func findLoan(userId int, title string, isReturned bool) (loan model.LoanDetail, err error) {
 	loan = model.LoanDetail{}
 
 	err = global.Database.Preload("User").Preload("BookDetail").
 		Joins("JOIN book_details ON book_details.id = loan_details.book_id").
-		Where("book_details.title = ? AND loan_details.user_id = ?", title, userId).
+		Where("book_details.title = ? AND loan_details.user_id = ? AND is_returned = ?", title, userId, isReturned).
 		First(&loan).Error
 
 	return loan, err
