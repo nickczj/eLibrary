@@ -45,8 +45,22 @@ type APIResponse struct {
 }
 
 type SuccessBookResponse struct {
+	Data dto.BookDetail `json:"data"`
+}
+
+type SuccessCreateBookResponse struct {
 	APIResponse
 	Data dto.BookDetail `json:"data"`
+}
+
+type SuccessLoanResponse struct {
+	APIResponse
+	Data dto.Loan `json:"data"`
+}
+
+type SuccessUserResponse struct {
+	APIResponse
+	Data dto.User `json:"data"`
 }
 
 type FailedResponse struct {

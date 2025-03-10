@@ -9,6 +9,35 @@ definitions:
       title:
         type: string
     type: object
+  dto.Loan:
+    properties:
+      author:
+        type: string
+      isbn:
+        type: string
+      loan_date:
+        type: string
+      return_date:
+        type: string
+      title:
+        type: string
+    type: object
+  dto.User:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - first_name
+    - last_name
+    - username
+    type: object
   gorm.DeletedAt:
     properties:
       time:
@@ -65,6 +94,33 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/dto.BookDetail'
+    type: object
+  model.SuccessCreateBookResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dto.BookDetail'
+      message:
+        description: Descriptive message
+        type: string
+      status:
+        description: '"success" or "error"'
+        type: string
+    type: object
+  model.SuccessLoanResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dto.Loan'
+      message:
+        description: Descriptive message
+        type: string
+      status:
+        description: '"success" or "error"'
+        type: string
+    type: object
+  model.SuccessUserResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dto.User'
       message:
         description: Descriptive message
         type: string
@@ -158,13 +214,17 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.SuccessBookResponse'
+            $ref: '#/definitions/model.SuccessLoanResponse'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/model.FailedResponse'
         "404":
           description: Not Found
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+        "409":
+          description: Conflict
           schema:
             $ref: '#/definitions/model.FailedResponse'
         "500":
@@ -190,13 +250,9 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.SuccessBookResponse'
+            $ref: '#/definitions/model.SuccessCreateBookResponse'
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/model.FailedResponse'
-        "404":
-          description: Not Found
           schema:
             $ref: '#/definitions/model.FailedResponse'
         "500":
@@ -222,13 +278,9 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.SuccessBookResponse'
+            $ref: '#/definitions/model.SuccessUserResponse'
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/model.FailedResponse'
-        "404":
-          description: Not Found
           schema:
             $ref: '#/definitions/model.FailedResponse'
         "500":
@@ -254,13 +306,17 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.SuccessBookResponse'
+            $ref: '#/definitions/model.SuccessLoanResponse'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/model.FailedResponse'
         "404":
           description: Not Found
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+        "409":
+          description: Conflict
           schema:
             $ref: '#/definitions/model.FailedResponse'
         "500":
@@ -286,13 +342,17 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.SuccessBookResponse'
+            $ref: '#/definitions/model.SuccessLoanResponse'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/model.FailedResponse'
         "404":
           description: Not Found
+          schema:
+            $ref: '#/definitions/model.FailedResponse'
+        "409":
+          description: Conflict
           schema:
             $ref: '#/definitions/model.FailedResponse'
         "500":
