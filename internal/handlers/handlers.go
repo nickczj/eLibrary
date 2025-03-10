@@ -42,6 +42,7 @@ func GetBook(c *gin.Context) {
 //	@Success		200		{object}	model.SuccessBookResponse
 //	@Failure		400		{object}	model.FailedResponse
 //	@Failure		404		{object}	model.FailedResponse
+//	@Failure		409		{object}	model.FailedResponse
 //	@Failure		500		{object}	model.FailedResponse
 //	@Router			/elibrary/v1/borrow [post]
 func BorrowBook(c *gin.Context) {
@@ -65,6 +66,7 @@ func BorrowBook(c *gin.Context) {
 //	@Success		200		{object}	model.SuccessBookResponse
 //	@Failure		400		{object}	model.FailedResponse
 //	@Failure		404		{object}	model.FailedResponse
+//	@Failure		409		{object}	model.FailedResponse
 //	@Failure		500		{object}	model.FailedResponse
 //	@Router			/elibrary/v1/extend [post]
 func ExtendBook(c *gin.Context) {
@@ -88,6 +90,7 @@ func ExtendBook(c *gin.Context) {
 //	@Success		200		{object}	model.SuccessBookResponse
 //	@Failure		400		{object}	model.FailedResponse
 //	@Failure		404		{object}	model.FailedResponse
+//	@Failure		409		{object}	model.FailedResponse
 //	@Failure		500		{object}	model.FailedResponse
 //	@Router			/elibrary/v1/return [post]
 func ReturnBook(c *gin.Context) {
@@ -110,7 +113,6 @@ func ReturnBook(c *gin.Context) {
 //	@Param			request	body		model.BookDetail	true	"Request Body"
 //	@Success		200		{object}	model.SuccessBookResponse
 //	@Failure		400		{object}	model.FailedResponse
-//	@Failure		404		{object}	model.FailedResponse
 //	@Failure		500		{object}	model.FailedResponse
 //	@Router			/elibrary/v1/create-book [post]
 func CreateBook(c *gin.Context) {
@@ -133,7 +135,6 @@ func CreateBook(c *gin.Context) {
 //	@Param			request	body		model.User	true	"Request Body"
 //	@Success		200		{object}	model.SuccessBookResponse
 //	@Failure		400		{object}	model.FailedResponse
-//	@Failure		404		{object}	model.FailedResponse
 //	@Failure		500		{object}	model.FailedResponse
 //	@Router			/elibrary/v1/create-user [post]
 func CreateUser(c *gin.Context) {
